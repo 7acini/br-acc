@@ -1,0 +1,136 @@
+import re
+from typing import Annotated, Any
+
+from fastapi import APIRouter, Depends, HTTPException, Query
+from neo4j import AsyncSession
+
+from icarus.dependencies import get_session
+from icarus.models.entity import (
+    ConnectionResponse,
+    EntityResponse,
+    EntityWithConnections,
+    SourceAttribution,
+)
+from icarus.services.neo4j_service import execute_query, execute_query_single
+
+router = APIRouter(prefix="/api/v1/entity", tags=["entity"])
+
+CPF_PATTERN = re.compile(r"^\d{11}$")
+CNPJ_PATTERN = re.compile(r"^\d{14}$")
+
+PEP_ROLES = {"deputado", "senador", "vereador", "prefeito", "governador", "presidente", "ministro"}
+
+
+def _clean_identifier(raw: str) -> str:
+    return re.sub(r"[.\-/]", "", raw)
+
+
+def _is_pep(properties: dict[str, Any]) -> bool:
+    role = str(properties.get("role", "")).lower()
+    return any(keyword in role for keyword in PEP_ROLES)
+
+
+def _node_to_entity(
+    node: Any, labels: list[str], entity_id: str
+) -> EntityResponse:
+    props = dict(node)
+    entity_type = labels[0].lower() if labels else "unknown"
+    sources = []
+    if "source" in props:
+        source_val = props.pop("source")
+        if isinstance(source_val, list):
+            sources = [SourceAttribution(database=s) for s in source_val]
+        elif isinstance(source_val, str):
+            sources = [SourceAttribution(database=source_val)]
+    return EntityResponse(
+        id=entity_id,
+        type=entity_type,
+        properties=props,
+        sources=sources,
+        is_pep=_is_pep(props),
+    )
+
+
+@router.get("/{cpf_or_cnpj}", response_model=EntityResponse)
+async def get_entity(
+    cpf_or_cnpj: str,
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> EntityResponse:
+    identifier = _clean_identifier(cpf_or_cnpj)
+
+    if not CPF_PATTERN.match(identifier) and not CNPJ_PATTERN.match(identifier):
+        raise HTTPException(status_code=400, detail="Invalid CPF or CNPJ format")
+
+    record = await execute_query_single(
+        session, "entity_lookup", {"identifier": identifier}
+    )
+    if record is None:
+        raise HTTPException(status_code=404, detail="Entity not found")
+
+    return _node_to_entity(
+        record["e"], record["entity_labels"], record["entity_id"]
+    )
+
+
+@router.get("/{entity_id}/connections", response_model=EntityWithConnections)
+async def get_connections(
+    entity_id: str,
+    session: Annotated[AsyncSession, Depends(get_session)],
+    depth: Annotated[int, Query(ge=1, le=4)] = 2,
+    types: Annotated[str | None, Query()] = None,
+) -> EntityWithConnections:
+    records = await execute_query(
+        session, "entity_connections", {"entity_id": entity_id}
+    )
+
+    if not records:
+        raise HTTPException(status_code=404, detail="Entity not found or has no connections")
+
+    first = records[0]
+    entity = _node_to_entity(
+        first["e"], first["source_labels"], first["source_id"]
+    )
+
+    type_filter = {t.strip().lower() for t in types.split(",")} if types else None
+
+    connections: list[ConnectionResponse] = []
+    connected_entities: list[EntityResponse] = []
+    seen_ids: set[str] = set()
+
+    for record in records:
+        target_labels = record["target_labels"]
+        target_type = target_labels[0].lower() if target_labels else "unknown"
+
+        if type_filter and target_type not in type_filter:
+            continue
+
+        rel_props = dict(record["r"])
+        confidence = float(rel_props.pop("confidence", 1.0))
+        source_val = rel_props.pop("source", None)
+        rel_sources: list[SourceAttribution] = []
+        if isinstance(source_val, str):
+            rel_sources = [SourceAttribution(database=source_val)]
+        elif isinstance(source_val, list):
+            rel_sources = [SourceAttribution(database=s) for s in source_val]
+
+        connections.append(ConnectionResponse(
+            source_id=record["source_id"],
+            target_id=record["target_id"],
+            relationship_type=record["rel_type"],
+            properties=rel_props,
+            confidence=confidence,
+            sources=rel_sources,
+        ))
+
+        target_id = record["target_id"]
+        if target_id not in seen_ids:
+            seen_ids.add(target_id)
+            connected_entities.append(
+                _node_to_entity(record["connected"], target_labels, target_id)
+            )
+
+    return EntityWithConnections(
+        entity=entity,
+        connections=connections,
+        connected_entities=connected_entities,
+    )

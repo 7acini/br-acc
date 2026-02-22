@@ -1,0 +1,9 @@
+CALL db.index.fulltext.queryNodes("entity_search", $query)
+YIELD node, score
+WITH node, score, labels(node) AS node_labels
+WHERE $entity_type IS NULL
+   OR ANY(label IN node_labels WHERE toLower(label) = $entity_type)
+RETURN node, score, node_labels, elementId(node) AS node_id
+ORDER BY score DESC
+SKIP $skip
+LIMIT $limit
