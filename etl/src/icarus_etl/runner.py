@@ -3,9 +3,11 @@ import logging
 import click
 from neo4j import GraphDatabase
 
+from icarus_etl.pipelines.bcb import BcbPipeline
 from icarus_etl.pipelines.bndes import BndesPipeline
 from icarus_etl.pipelines.camara import CamaraPipeline
 from icarus_etl.pipelines.ceaf import CeafPipeline
+from icarus_etl.pipelines.cepim import CepimPipeline
 from icarus_etl.pipelines.cnpj import CNPJPipeline
 from icarus_etl.pipelines.comprasnet import ComprasnetPipeline
 from icarus_etl.pipelines.cpgf import CpgfPipeline
@@ -33,6 +35,8 @@ from icarus_etl.pipelines.tcu import TcuPipeline
 from icarus_etl.pipelines.transferegov import TransferegovPipeline
 from icarus_etl.pipelines.transparencia import TransparenciaPipeline
 from icarus_etl.pipelines.tse import TSEPipeline
+from icarus_etl.pipelines.tse_bens import TseBensPipeline
+from icarus_etl.pipelines.tse_filiados import TseFiliadosPipeline
 from icarus_etl.pipelines.viagens import ViagensPipeline
 
 PIPELINES: dict[str, type] = {
@@ -58,6 +62,7 @@ PIPELINES: dict[str, type] = {
     "camara": CamaraPipeline,
     "senado": SenadoPipeline,
     "ceaf": CeafPipeline,
+    "cepim": CepimPipeline,
     "cpgf": CpgfPipeline,
     "leniency": LeniencyPipeline,
     "ofac": OfacPipeline,
@@ -67,6 +72,9 @@ PIPELINES: dict[str, type] = {
     "pncp": PncpPipeline,
     "renuncias": RenunciasPipeline,
     "siconfi": SiconfiPipeline,
+    "tse_bens": TseBensPipeline,
+    "tse_filiados": TseFiliadosPipeline,
+    "bcb": BcbPipeline,
 }
 
 

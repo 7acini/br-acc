@@ -64,7 +64,11 @@ async def database_stats(
         "dou_act_count": record["dou_act_count"] if record else 0,
         "tax_waiver_count": record["tax_waiver_count"] if record else 0,
         "municipal_finance_count": record["municipal_finance_count"] if record else 0,
-        "data_sources": 31,
+        "declared_asset_count": record["declared_asset_count"] if record else 0,
+        "party_membership_count": record["party_membership_count"] if record else 0,
+        "barred_ngo_count": record["barred_ngo_count"] if record else 0,
+        "bcb_penalty_count": record["bcb_penalty_count"] if record else 0,
+        "data_sources": 35,
     }
 
     _stats_cache = result
@@ -107,5 +111,9 @@ async def list_sources() -> dict[str, list[dict[str, str]]]:
             {"id": "cvm_funds", "name": "CVM (Fundos de Investimento)", "frequency": "monthly"},
             {"id": "renuncias", "name": "Renúncias Fiscais", "frequency": "annual"},
             {"id": "siconfi", "name": "SICONFI (Finanças Municipais)", "frequency": "annual"},
+            {"id": "tse_bens", "name": "TSE Bens Declarados", "frequency": "biennial"},
+            {"id": "tse_filiados", "name": "TSE Filiação Partidária", "frequency": "monthly"},
+            {"id": "cepim", "name": "CEPIM (ONGs Impedidas)", "frequency": "monthly"},
+            {"id": "bcb", "name": "BCB (Penalidades Bancárias)", "frequency": "monthly"},
         ]
     }

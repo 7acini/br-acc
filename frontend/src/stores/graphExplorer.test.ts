@@ -26,6 +26,10 @@ const INITIAL_ENTITY_TYPES = [
   "douAct",
   "taxWaiver",
   "municipalFinance",
+  "declaredAsset",
+  "partyMembership",
+  "barredNgo",
+  "bcbPenalty",
 ];
 
 const INITIAL_REL_TYPES = [
@@ -56,6 +60,10 @@ const INITIAL_REL_TYPES = [
   "MENCIONOU",
   "RECEBEU_RENUNCIA",
   "DECLAROU_FINANCA",
+  "DECLAROU_BEM",
+  "FILIADO_A",
+  "IMPEDIDA",
+  "BCB_PENALIZADA",
 ];
 
 describe("useGraphExplorerStore", () => {

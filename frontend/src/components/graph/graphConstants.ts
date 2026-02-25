@@ -38,6 +38,10 @@ export const ICON_MAP: Record<string, string> = {
   douAct: "Newspaper",
   taxWaiver: "Receipt",
   municipalFinance: "Landmark",
+  declaredAsset: "Wallet",
+  partyMembership: "Users",
+  barredNgo: "ShieldOff",
+  bcbPenalty: "Banknote",
 };
 
 // Pre-rendered icon cache
@@ -86,6 +90,10 @@ function createIconSvg(type: string, color: string, size: number): string {
     douAct: `<rect x="${s * 0.15}" y="${s * 0.15}" width="${s * 0.7}" height="${s * 0.7}" rx="1" fill="${color}"/><line x1="${s * 0.3}" y1="${s * 0.35}" x2="${s * 0.7}" y2="${s * 0.35}" stroke="#060a07" stroke-width="1"/><line x1="${s * 0.3}" y1="${s * 0.5}" x2="${s * 0.7}" y2="${s * 0.5}" stroke="#060a07" stroke-width="1"/><line x1="${s * 0.3}" y1="${s * 0.65}" x2="${s * 0.55}" y2="${s * 0.65}" stroke="#060a07" stroke-width="1"/>`,
     taxWaiver: `<rect x="${s * 0.2}" y="${s * 0.15}" width="${s * 0.6}" height="${s * 0.7}" rx="1" fill="${color}"/><text x="${s / 2}" y="${s * 0.6}" text-anchor="middle" font-size="${s * 0.3}" fill="#060a07">%</text>`,
     municipalFinance: `<rect x="${s * 0.2}" y="${s * 0.4}" width="${s * 0.6}" height="${s * 0.45}" rx="1" fill="${color}"/><polygon points="${s / 2},${s * 0.15} ${s * 0.15},${s * 0.4} ${s * 0.85},${s * 0.4}" fill="${color}"/>`,
+    declaredAsset: `<rect x="${s * 0.15}" y="${s * 0.3}" width="${s * 0.7}" height="${s * 0.45}" rx="3" fill="${color}"/><rect x="${s * 0.25}" y="${s * 0.2}" width="${s * 0.5}" height="${s * 0.15}" rx="2" fill="${color}"/>`,
+    partyMembership: `<circle cx="${s * 0.35}" cy="${s * 0.35}" r="${s * 0.18}" fill="${color}"/><circle cx="${s * 0.65}" cy="${s * 0.35}" r="${s * 0.18}" fill="${color}"/><ellipse cx="${s / 2}" cy="${s * 0.72}" rx="${s * 0.35}" ry="${s * 0.18}" fill="${color}"/>`,
+    barredNgo: `<rect x="${s * 0.2}" y="${s * 0.2}" width="${s * 0.6}" height="${s * 0.6}" rx="2" fill="${color}"/><line x1="${s * 0.25}" y1="${s * 0.25}" x2="${s * 0.75}" y2="${s * 0.75}" stroke="#060a07" stroke-width="2"/>`,
+    bcbPenalty: `<rect x="${s * 0.15}" y="${s * 0.25}" width="${s * 0.7}" height="${s * 0.5}" rx="2" fill="${color}"/><text x="${s / 2}" y="${s * 0.58}" text-anchor="middle" font-size="${s * 0.3}" fill="#060a07" font-weight="bold">B</text>`,
   };
   const shape =
     shapes[type] ??

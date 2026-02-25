@@ -57,6 +57,10 @@ const INITIAL_ENTITY_TYPES = new Set([
   "douAct",
   "taxWaiver",
   "municipalFinance",
+  "declaredAsset",
+  "partyMembership",
+  "barredNgo",
+  "bcbPenalty",
 ]);
 
 const INITIAL_REL_TYPES = new Set([
@@ -87,6 +91,10 @@ const INITIAL_REL_TYPES = new Set([
   "MENCIONOU",
   "RECEBEU_RENUNCIA",
   "DECLAROU_FINANCA",
+  "DECLAROU_BEM",
+  "FILIADO_A",
+  "IMPEDIDA",
+  "BCB_PENALIZADA",
 ]);
 
 function initialState() {

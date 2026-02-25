@@ -88,6 +88,18 @@ CALL {
 CALL {
   MATCH (m:MunicipalFinance) RETURN count(m) AS municipal_finance_count
 }
+CALL {
+  MATCH (d:DeclaredAsset) RETURN count(d) AS declared_asset_count
+}
+CALL {
+  MATCH (pm:PartyMembership) RETURN count(pm) AS party_membership_count
+}
+CALL {
+  MATCH (b:BarredNGO) RETURN count(b) AS barred_ngo_count
+}
+CALL {
+  MATCH (b:BCBPenalty) RETURN count(b) AS bcb_penalty_count
+}
 RETURN total_nodes, total_relationships,
        person_count, company_count, health_count,
        finance_count, contract_count, sanction_count,
@@ -99,4 +111,6 @@ RETURN total_nodes, total_relationships,
        international_sanction_count,
        gov_card_expense_count, gov_travel_count, bid_count,
        fund_count, dou_act_count, tax_waiver_count,
-       municipal_finance_count
+       municipal_finance_count,
+       declared_asset_count, party_membership_count,
+       barred_ngo_count, bcb_penalty_count

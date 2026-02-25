@@ -27,6 +27,10 @@ export const dataColors = {
   douAct: "#78716C",
   taxWaiver: "#DB2777",
   municipalFinance: "#0D9488",
+  declaredAsset: "#7C3AED",
+  partyMembership: "#059669",
+  barredNgo: "#BE185D",
+  bcbPenalty: "#B45309",
 } as const;
 
 export type DataEntityType = keyof typeof dataColors;
@@ -67,6 +71,10 @@ export const relationshipColors: Record<string, string> = {
   RECEBEU_RENUNCIA: "#DB2777",
   DECLAROU_FINANCA: "#0D9488",
   FORNECEU_LICITACAO: "#8B5CF6",
+  DECLAROU_BEM: "#7C3AED",
+  FILIADO_A: "#059669",
+  IMPEDIDA: "#BE185D",
+  BCB_PENALIZADA: "#B45309",
 };
 
 export const semanticColors = {
@@ -107,6 +115,10 @@ export const entityColors: Record<string, string> = {
   douAct: "#78716C",
   taxWaiver: "#DB2777",
   municipalFinance: "#0D9488",
+  declaredAsset: "#7C3AED",
+  partyMembership: "#059669",
+  barredNgo: "#BE185D",
+  bcbPenalty: "#B45309",
 };
 
 export type EntityType = keyof typeof entityColors;
