@@ -46,6 +46,10 @@ const INITIAL_ENTITY_TYPES = new Set([
   "education",
   "convenio",
   "laborstats",
+  "pepRecord",
+  "expulsion",
+  "leniencyAgreement",
+  "internationalSanction",
 ]);
 
 const INITIAL_REL_TYPES = new Set([
@@ -63,6 +67,10 @@ const INITIAL_REL_TYPES = new Set([
   "BENEFICIOU",
   "GEROU_CONVENIO",
   "SAME_AS",
+  "PEP_REGISTRADA",
+  "EXPULSO",
+  "FIRMOU_LENIENCIA",
+  "HOLDING_DE",
 ]);
 
 function initialState() {

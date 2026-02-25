@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import time
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -127,37 +126,6 @@ class BndesPipeline(Pipeline):
             len(self.relationships),
         )
 
-    def _run_with_retry(
-        self,
-        loader: Neo4jBatchLoader,
-        query: str,
-        rows: list[dict[str, Any]],
-        batch_size: int = 500,
-    ) -> int:
-        """Run query in small batches with deadlock retry."""
-        from neo4j.exceptions import TransientError
-
-        total = 0
-        for i in range(0, len(rows), batch_size):
-            batch = rows[i : i + batch_size]
-            for attempt in range(5):
-                try:
-                    with self.driver.session() as session:
-                        session.run(query, {"rows": batch})
-                    total += len(batch)
-                    break
-                except TransientError:
-                    wait = 2 ** attempt
-                    logger.warning(
-                        "[bndes] Deadlock on batch %d, retry in %ds",
-                        i // batch_size,
-                        wait,
-                    )
-                    time.sleep(wait)
-            else:
-                logger.error("[bndes] Failed batch %d after 5 retries, skipping", i // batch_size)
-        return total
-
     def load(self) -> None:
         loader = Neo4jBatchLoader(self.driver)
 
@@ -178,5 +146,5 @@ class BndesPipeline(Pipeline):
                 "    r.rate = row.rate, "
                 "    r.date = row.date"
             )
-            loaded = self._run_with_retry(loader, query, self.relationships, batch_size=500)
+            loaded = loader.run_query_with_retry(query, self.relationships, batch_size=500)
             logger.info("[bndes] Loaded %d RECEBEU_EMPRESTIMO relationships", loaded)

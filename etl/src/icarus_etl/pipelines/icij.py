@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import time
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -211,37 +210,6 @@ class ICIJPipeline(Pipeline):
             len(self.intermediary_of_rels),
         )
 
-    def _run_with_retry(
-        self,
-        loader: Neo4jBatchLoader,
-        query: str,
-        rows: list[dict[str, Any]],
-        batch_size: int = 500,
-    ) -> int:
-        """Run query in small batches with deadlock retry."""
-        from neo4j.exceptions import TransientError
-
-        total = 0
-        for i in range(0, len(rows), batch_size):
-            batch = rows[i : i + batch_size]
-            for attempt in range(5):
-                try:
-                    with self.driver.session() as session:
-                        session.run(query, {"rows": batch})
-                    total += len(batch)
-                    break
-                except TransientError:
-                    wait = 2 ** attempt
-                    logger.warning(
-                        "[icij] Deadlock on batch %d, retry in %ds",
-                        i // batch_size,
-                        wait,
-                    )
-                    time.sleep(wait)
-            else:
-                logger.error("[icij] Failed batch %d after 5 retries, skipping", i // batch_size)
-        return total
-
     def load(self) -> None:
         loader = Neo4jBatchLoader(self.driver)
 
@@ -266,7 +234,7 @@ class ICIJPipeline(Pipeline):
                 "SET r.link = row.link, "
                 "    r.source_investigation = row.source_investigation"
             )
-            loaded = self._run_with_retry(loader, query, self.officer_of_rels)
+            loaded = loader.run_query_with_retry(query, self.officer_of_rels)
             logger.info("[icij] Loaded %d OFFICER_OF relationships", loaded)
 
         if self.intermediary_of_rels:
@@ -278,5 +246,5 @@ class ICIJPipeline(Pipeline):
                 "SET r.link = row.link, "
                 "    r.source_investigation = row.source_investigation"
             )
-            loaded = self._run_with_retry(loader, query, self.intermediary_of_rels)
+            loaded = loader.run_query_with_retry(query, self.intermediary_of_rels)
             logger.info("[icij] Loaded %d INTERMEDIARY_OF relationships", loaded)

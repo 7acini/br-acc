@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import time
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -153,41 +152,6 @@ class PgfnPipeline(Pipeline):
             skipped_bad_cnpj,
         )
 
-    def _run_with_retry(
-        self,
-        query: str,
-        rows: list[dict[str, Any]],
-        batch_size: int = 2000,
-    ) -> int:
-        """Run query in batches with deadlock retry."""
-        from neo4j.exceptions import TransientError
-
-        total = 0
-        for i in range(0, len(rows), batch_size):
-            batch = rows[i : i + batch_size]
-            for attempt in range(5):
-                try:
-                    with self.driver.session() as session:
-                        session.run(query, {"rows": batch})
-                    total += len(batch)
-                    break
-                except TransientError:
-                    wait = 2 ** attempt
-                    logger.warning(
-                        "[pgfn] Deadlock on batch %d, retry in %ds",
-                        i // batch_size,
-                        wait,
-                    )
-                    time.sleep(wait)
-            else:
-                logger.error(
-                    "[pgfn] Failed batch %d after 5 retries, skipping",
-                    i // batch_size,
-                )
-            if total > 0 and total % 100_000 == 0:
-                logger.info("[pgfn] Progress: %d rows loaded", total)
-        return total
-
     def load(self) -> None:
         loader = Neo4jBatchLoader(self.driver)
 
@@ -206,5 +170,5 @@ class PgfnPipeline(Pipeline):
                 "SET r.value = row.value, "
                 "    r.date = row.date"
             )
-            loaded = self._run_with_retry(query, self.relationships, batch_size=2000)
+            loaded = loader.run_query_with_retry(query, self.relationships, batch_size=2000)
             logger.info("[pgfn] Loaded %d DEVE relationships", loaded)

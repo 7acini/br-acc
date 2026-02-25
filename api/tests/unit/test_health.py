@@ -17,7 +17,7 @@ async def test_meta_sources(client: AsyncClient) -> None:
     assert response.status_code == 200
     data = response.json()
     assert "sources" in data
-    assert len(data["sources"]) == 19
+    assert len(data["sources"]) == 24
     source_ids = [s["id"] for s in data["sources"]]
     assert "cnpj" in source_ids
     assert "tse" in source_ids
@@ -35,6 +35,11 @@ async def test_meta_sources(client: AsyncClient) -> None:
     assert "cvm" in source_ids
     assert "camara" in source_ids
     assert "senado" in source_ids
+    assert "pep_cgu" in source_ids
+    assert "ceaf" in source_ids
+    assert "leniency" in source_ids
+    assert "ofac" in source_ids
+    assert "holdings" in source_ids
 
 
 @pytest.mark.anyio
@@ -59,6 +64,10 @@ async def test_meta_stats(client: AsyncClient) -> None:
         "global_pep_count": 15_000,
         "cvm_proceeding_count": 5_000,
         "expense_count": 2_000_000,
+        "pep_record_count": 100_000,
+        "expulsion_count": 10_000,
+        "leniency_count": 34,
+        "international_sanction_count": 12_000,
     }
 
     # Reset the stats cache between tests
@@ -95,4 +104,8 @@ async def test_meta_stats(client: AsyncClient) -> None:
     assert data["global_pep_count"] == 15_000
     assert data["cvm_proceeding_count"] == 5_000
     assert data["expense_count"] == 2_000_000
-    assert data["data_sources"] == 19
+    assert data["pep_record_count"] == 100_000
+    assert data["expulsion_count"] == 10_000
+    assert data["leniency_count"] == 34
+    assert data["international_sanction_count"] == 12_000
+    assert data["data_sources"] == 24

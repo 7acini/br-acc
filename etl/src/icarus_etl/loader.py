@@ -1,12 +1,16 @@
 import logging
 import re
+import time
 from typing import Any
 
 from neo4j import Driver
+from neo4j.exceptions import TransientError
 
 logger = logging.getLogger(__name__)
 
 _SAFE_KEY = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
+
+_MAX_RETRIES = 5
 
 
 class Neo4jBatchLoader:
@@ -17,16 +21,55 @@ class Neo4jBatchLoader:
         self.batch_size = batch_size
         self._total_written = 0
 
+    def _run_batch_once(self, query: str, batch: list[dict[str, Any]]) -> None:
+        with self.driver.session() as session:
+            session.run(query, {"rows": batch})
+
     def _run_batches(self, query: str, rows: list[dict[str, Any]]) -> int:
         total = 0
         for i in range(0, len(rows), self.batch_size):
             batch = rows[i : i + self.batch_size]
-            with self.driver.session() as session:
-                session.run(query, {"rows": batch})
+            self._run_batch_once(query, batch)
             total += len(batch)
             self._total_written += len(batch)
         if total >= 10_000:
             logger.info("  Batch written: %d rows (cumulative: %d)", total, self._total_written)
+        return total
+
+    def run_query_with_retry(
+        self,
+        query: str,
+        rows: list[dict[str, Any]],
+        batch_size: int = 500,
+    ) -> int:
+        """Run query in batches with exponential-backoff retry on deadlocks."""
+        total = 0
+        for i in range(0, len(rows), batch_size):
+            batch = rows[i : i + batch_size]
+            for attempt in range(_MAX_RETRIES):
+                try:
+                    self._run_batch_once(query, batch)
+                    total += len(batch)
+                    self._total_written += len(batch)
+                    break
+                except TransientError:
+                    wait = 2 ** attempt
+                    logger.warning(
+                        "Deadlock on batch %d, retry %d/%d in %ds",
+                        i // batch_size,
+                        attempt + 1,
+                        _MAX_RETRIES,
+                        wait,
+                    )
+                    time.sleep(wait)
+            else:
+                logger.error(
+                    "Failed batch %d after %d retries, skipping",
+                    i // batch_size,
+                    _MAX_RETRIES,
+                )
+            if total > 0 and total % 100_000 == 0:
+                logger.info("  Progress: %d rows loaded", total)
         return total
 
     def load_nodes(

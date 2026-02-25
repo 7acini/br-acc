@@ -56,6 +56,42 @@ CREATE CONSTRAINT cvm_proceeding_id_unique IF NOT EXISTS
 CREATE CONSTRAINT expense_id_unique IF NOT EXISTS
   FOR (e:Expense) REQUIRE e.expense_id IS UNIQUE;
 
+CREATE CONSTRAINT expulsion_id_unique IF NOT EXISTS
+  FOR (e:Expulsion) REQUIRE e.expulsion_id IS UNIQUE;
+
+CREATE CONSTRAINT leniency_id_unique IF NOT EXISTS
+  FOR (l:LeniencyAgreement) REQUIRE l.leniency_id IS UNIQUE;
+
+CREATE CONSTRAINT pep_record_id_unique IF NOT EXISTS
+  FOR (p:PEPRecord) REQUIRE p.pep_id IS UNIQUE;
+
+CREATE CONSTRAINT barred_ngo_id_unique IF NOT EXISTS
+  FOR (b:BarredNGO) REQUIRE b.ngo_id IS UNIQUE;
+
+CREATE CONSTRAINT gov_card_expense_id_unique IF NOT EXISTS
+  FOR (g:GovCardExpense) REQUIRE g.expense_id IS UNIQUE;
+
+CREATE CONSTRAINT gov_travel_id_unique IF NOT EXISTS
+  FOR (t:GovTravel) REQUIRE t.travel_id IS UNIQUE;
+
+CREATE CONSTRAINT tax_waiver_id_unique IF NOT EXISTS
+  FOR (t:TaxWaiver) REQUIRE t.waiver_id IS UNIQUE;
+
+CREATE CONSTRAINT bank_penalty_id_unique IF NOT EXISTS
+  FOR (b:BankPenalty) REQUIRE b.penalty_id IS UNIQUE;
+
+CREATE CONSTRAINT legal_case_id_unique IF NOT EXISTS
+  FOR (l:LegalCase) REQUIRE l.case_id IS UNIQUE;
+
+CREATE CONSTRAINT international_sanction_id_unique IF NOT EXISTS
+  FOR (s:InternationalSanction) REQUIRE s.sanction_id IS UNIQUE;
+
+CREATE CONSTRAINT declared_asset_id_unique IF NOT EXISTS
+  FOR (d:DeclaredAsset) REQUIRE d.asset_id IS UNIQUE;
+
+CREATE CONSTRAINT holding_rel_id_unique IF NOT EXISTS
+  FOR (h:Holding) REQUIRE h.holding_id IS UNIQUE;
+
 // ── Indexes ─────────────────────────────────────────────
 CREATE INDEX person_name IF NOT EXISTS
   FOR (p:Person) ON (p.name);
@@ -199,9 +235,56 @@ CREATE INDEX person_servidor_id IF NOT EXISTS
 CREATE INDEX public_office_org IF NOT EXISTS
   FOR (po:PublicOffice) ON (po.org);
 
+// ── PEPRecord Indexes ─────────────────────────────────────
+CREATE INDEX pep_record_name IF NOT EXISTS
+  FOR (p:PEPRecord) ON (p.name);
+
+CREATE INDEX pep_record_role IF NOT EXISTS
+  FOR (p:PEPRecord) ON (p.role);
+
+CREATE INDEX pep_record_org IF NOT EXISTS
+  FOR (p:PEPRecord) ON (p.org);
+
+// ── Expulsion Indexes ─────────────────────────────────────
+CREATE INDEX expulsion_date IF NOT EXISTS
+  FOR (e:Expulsion) ON (e.date);
+
+// ── LeniencyAgreement Indexes ─────────────────────────────
+CREATE INDEX leniency_date IF NOT EXISTS
+  FOR (l:LeniencyAgreement) ON (l.date);
+
+// ── GovCardExpense Indexes ────────────────────────────────
+CREATE INDEX gov_card_expense_date IF NOT EXISTS
+  FOR (g:GovCardExpense) ON (g.date);
+
+CREATE INDEX gov_card_expense_value IF NOT EXISTS
+  FOR (g:GovCardExpense) ON (g.value);
+
+// ── TaxWaiver Indexes ─────────────────────────────────────
+CREATE INDEX tax_waiver_value IF NOT EXISTS
+  FOR (t:TaxWaiver) ON (t.value);
+
+// ── LegalCase Indexes ─────────────────────────────────────
+CREATE INDEX legal_case_type IF NOT EXISTS
+  FOR (l:LegalCase) ON (l.type);
+
+CREATE INDEX legal_case_date IF NOT EXISTS
+  FOR (l:LegalCase) ON (l.date);
+
+// ── DeclaredAsset Indexes ─────────────────────────────────
+CREATE INDEX declared_asset_type IF NOT EXISTS
+  FOR (d:DeclaredAsset) ON (d.type);
+
+CREATE INDEX declared_asset_value IF NOT EXISTS
+  FOR (d:DeclaredAsset) ON (d.value);
+
+// ── InternationalSanction Indexes ─────────────────────────
+CREATE INDEX international_sanction_source IF NOT EXISTS
+  FOR (s:InternationalSanction) ON (s.source);
+
 // ── Fulltext Search Index ───────────────────────────────
 CREATE FULLTEXT INDEX entity_search IF NOT EXISTS
-  FOR (n:Person|Company|Health|Education|Contract|Amendment|Convenio|Embargo|PublicOffice|OffshoreEntity|OffshoreOfficer|GlobalPEP|CVMProceeding|Expense)
+  FOR (n:Person|Company|Health|Education|Contract|Amendment|Convenio|Embargo|PublicOffice|OffshoreEntity|OffshoreOfficer|GlobalPEP|CVMProceeding|Expense|PEPRecord|Expulsion|LeniencyAgreement|GovCardExpense|TaxWaiver|LegalCase|DeclaredAsset|InternationalSanction)
   ON EACH [n.name, n.razao_social, n.cpf, n.cnpj, n.cnes_code, n.object, n.contracting_org, n.convenente, n.infraction, n.org, n.function, n.jurisdiction, n.penalty_type, n.description];
 
 // ── User Constraints ────────────────────────────────────

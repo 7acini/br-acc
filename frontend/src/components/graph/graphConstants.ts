@@ -27,6 +27,10 @@ export const ICON_MAP: Record<string, string> = {
   education: "GraduationCap",
   convenio: "Handshake",
   laborstats: "BarChart3",
+  pepRecord: "ShieldCheck",
+  expulsion: "UserX",
+  leniencyAgreement: "Scale",
+  internationalSanction: "Globe",
 };
 
 // Pre-rendered icon cache
@@ -64,6 +68,10 @@ function createIconSvg(type: string, color: string, size: number): string {
     education: `<rect x="${s * 0.15}" y="${s * 0.45}" width="${s * 0.7}" height="${s * 0.35}" rx="1" fill="${color}"/><polygon points="${s / 2},${s * 0.2} ${s * 0.2},${s * 0.45} ${s * 0.8},${s * 0.45}" fill="${color}"/>`,
     convenio: `<circle cx="${s * 0.35}" cy="${s * 0.5}" r="${s * 0.2}" fill="${color}"/><circle cx="${s * 0.65}" cy="${s * 0.5}" r="${s * 0.2}" fill="${color}"/>`,
     laborstats: `<rect x="${s * 0.2}" y="${s * 0.5}" width="${s * 0.15}" height="${s * 0.3}" fill="${color}"/><rect x="${s * 0.425}" y="${s * 0.35}" width="${s * 0.15}" height="${s * 0.45}" fill="${color}"/><rect x="${s * 0.65}" y="${s * 0.2}" width="${s * 0.15}" height="${s * 0.6}" fill="${color}"/>`,
+    pepRecord: `<rect x="${s * 0.2}" y="${s * 0.2}" width="${s * 0.6}" height="${s * 0.6}" rx="2" fill="${color}"/><polyline points="${s * 0.35},${s * 0.5} ${s * 0.45},${s * 0.6} ${s * 0.65},${s * 0.35}" stroke="#060a07" stroke-width="1.5" fill="none"/>`,
+    expulsion: `<circle cx="${s / 2}" cy="${s * 0.35}" r="${s * 0.2}" fill="${color}"/><line x1="${s * 0.3}" y1="${s * 0.6}" x2="${s * 0.7}" y2="${s * 0.8}" stroke="${color}" stroke-width="2"/><line x1="${s * 0.7}" y1="${s * 0.6}" x2="${s * 0.3}" y2="${s * 0.8}" stroke="${color}" stroke-width="2"/>`,
+    leniencyAgreement: `<polygon points="${s / 2},${s * 0.2} ${s * 0.2},${s * 0.6} ${s * 0.8},${s * 0.6}" fill="${color}"/><rect x="${s * 0.35}" y="${s * 0.6}" width="${s * 0.3}" height="${s * 0.2}" fill="${color}"/>`,
+    internationalSanction: `<circle cx="${s / 2}" cy="${s / 2}" r="${s * 0.35}" fill="none" stroke="${color}" stroke-width="1.5"/><line x1="${s * 0.15}" y1="${s / 2}" x2="${s * 0.85}" y2="${s / 2}" stroke="${color}" stroke-width="1"/><ellipse cx="${s / 2}" cy="${s / 2}" rx="${s * 0.15}" ry="${s * 0.35}" fill="none" stroke="${color}" stroke-width="1"/>`,
   };
   const shape =
     shapes[type] ??

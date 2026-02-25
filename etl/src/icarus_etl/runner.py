@@ -5,15 +5,20 @@ from neo4j import GraphDatabase
 
 from icarus_etl.pipelines.bndes import BndesPipeline
 from icarus_etl.pipelines.camara import CamaraPipeline
+from icarus_etl.pipelines.ceaf import CeafPipeline
 from icarus_etl.pipelines.cnpj import CNPJPipeline
 from icarus_etl.pipelines.comprasnet import ComprasnetPipeline
 from icarus_etl.pipelines.cvm import CvmPipeline
 from icarus_etl.pipelines.datasus import DatasusPipeline
 from icarus_etl.pipelines.dou import DouPipeline
+from icarus_etl.pipelines.holdings import HoldingsPipeline
 from icarus_etl.pipelines.ibama import IbamaPipeline
 from icarus_etl.pipelines.icij import ICIJPipeline
 from icarus_etl.pipelines.inep import InepPipeline
+from icarus_etl.pipelines.leniency import LeniencyPipeline
+from icarus_etl.pipelines.ofac import OfacPipeline
 from icarus_etl.pipelines.opensanctions import OpenSanctionsPipeline
+from icarus_etl.pipelines.pep_cgu import PepCguPipeline
 from icarus_etl.pipelines.pgfn import PgfnPipeline
 from icarus_etl.pipelines.rais import RaisPipeline
 from icarus_etl.pipelines.sanctions import SanctionsPipeline
@@ -28,6 +33,7 @@ PIPELINES: dict[str, type] = {
     "tse": TSEPipeline,
     "transparencia": TransparenciaPipeline,
     "sanctions": SanctionsPipeline,
+    "pep_cgu": PepCguPipeline,
     "bndes": BndesPipeline,
     "pgfn": PgfnPipeline,
     "ibama": IbamaPipeline,
@@ -43,6 +49,10 @@ PIPELINES: dict[str, type] = {
     "cvm": CvmPipeline,
     "camara": CamaraPipeline,
     "senado": SenadoPipeline,
+    "ceaf": CeafPipeline,
+    "leniency": LeniencyPipeline,
+    "ofac": OfacPipeline,
+    "holdings": HoldingsPipeline,
 }
 
 

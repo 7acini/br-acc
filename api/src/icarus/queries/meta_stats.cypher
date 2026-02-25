@@ -55,10 +55,24 @@ CALL {
 CALL {
   MATCH (e:Expense) RETURN count(e) AS expense_count
 }
+CALL {
+  MATCH (p:PEPRecord) RETURN count(p) AS pep_record_count
+}
+CALL {
+  MATCH (e:Expulsion) RETURN count(e) AS expulsion_count
+}
+CALL {
+  MATCH (l:LeniencyAgreement) RETURN count(l) AS leniency_count
+}
+CALL {
+  MATCH (s:InternationalSanction) RETURN count(s) AS international_sanction_count
+}
 RETURN total_nodes, total_relationships,
        person_count, company_count, health_count,
        finance_count, contract_count, sanction_count,
        election_count, amendment_count, embargo_count,
        education_count, convenio_count, laborstats_count,
        offshore_entity_count, offshore_officer_count,
-       global_pep_count, cvm_proceeding_count, expense_count
+       global_pep_count, cvm_proceeding_count, expense_count,
+       pep_record_count, expulsion_count, leniency_count,
+       international_sanction_count

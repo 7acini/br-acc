@@ -53,7 +53,11 @@ async def database_stats(
         "global_pep_count": record["global_pep_count"] if record else 0,
         "cvm_proceeding_count": record["cvm_proceeding_count"] if record else 0,
         "expense_count": record["expense_count"] if record else 0,
-        "data_sources": 19,
+        "pep_record_count": record["pep_record_count"] if record else 0,
+        "expulsion_count": record["expulsion_count"] if record else 0,
+        "leniency_count": record["leniency_count"] if record else 0,
+        "international_sanction_count": record["international_sanction_count"] if record else 0,
+        "data_sources": 24,
     }
 
     _stats_cache = result
@@ -84,5 +88,10 @@ async def list_sources() -> dict[str, list[dict[str, str]]]:
             {"id": "cvm", "name": "CVM (Processos Sancionadores)", "frequency": "monthly"},
             {"id": "camara", "name": "Câmara dos Deputados (CEAP)", "frequency": "monthly"},
             {"id": "senado", "name": "Senado Federal (CEAPS)", "frequency": "monthly"},
+            {"id": "pep_cgu", "name": "CGU PEP (Pessoas Expostas)", "frequency": "monthly"},
+            {"id": "ceaf", "name": "CEAF (Servidores Expulsos)", "frequency": "monthly"},
+            {"id": "leniency", "name": "Acordos de Leniência", "frequency": "monthly"},
+            {"id": "ofac", "name": "OFAC SDN (Sanções Internacionais)", "frequency": "monthly"},
+            {"id": "holdings", "name": "Brasil.IO (Holdings Empresariais)", "frequency": "monthly"},
         ]
     }

@@ -1,4 +1,6 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
+
+from neo4j.exceptions import TransientError
 
 from icarus_etl.loader import Neo4jBatchLoader
 
@@ -101,3 +103,32 @@ class TestNeo4jBatchLoader:
         rows = [{"a": 1}]
         count = loader.run_query("UNWIND $rows AS row CREATE (n:Test)", rows)
         assert count == 1
+
+    @patch("icarus_etl.loader.time.sleep")
+    def test_run_query_with_retry_success(self, mock_sleep: MagicMock) -> None:
+        loader, session = self._make_loader()
+        rows = [{"a": 1}, {"a": 2}, {"a": 3}]
+        count = loader.run_query_with_retry("UNWIND $rows AS row CREATE (n:T)", rows, batch_size=2)
+        assert count == 3
+        assert session.run.call_count == 2  # 2+1
+        mock_sleep.assert_not_called()
+
+    @patch("icarus_etl.loader.time.sleep")
+    def test_run_query_with_retry_recovers_from_deadlock(self, mock_sleep: MagicMock) -> None:
+        loader, session = self._make_loader()
+        session.run.side_effect = [TransientError("deadlock"), None]
+        rows = [{"a": 1}]
+        count = loader.run_query_with_retry("UNWIND $rows AS row CREATE (n:T)", rows, batch_size=10)
+        assert count == 1
+        assert session.run.call_count == 2
+        mock_sleep.assert_called_once_with(1)  # 2^0
+
+    @patch("icarus_etl.loader.time.sleep")
+    def test_run_query_with_retry_skips_after_max_retries(self, mock_sleep: MagicMock) -> None:
+        loader, session = self._make_loader()
+        session.run.side_effect = TransientError("deadlock")
+        rows = [{"a": 1}]
+        count = loader.run_query_with_retry("UNWIND $rows AS row CREATE (n:T)", rows, batch_size=10)
+        assert count == 0
+        assert session.run.call_count == 5
+        assert mock_sleep.call_count == 5
