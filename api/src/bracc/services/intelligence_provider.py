@@ -213,6 +213,7 @@ class CommunityIntelligenceProvider:
             company_identifier_formatted,
         )
 
+        pattern_ids: tuple[str, ...]
         if pattern_id == "__all__":
             pattern_ids = COMMUNITY_PATTERN_IDS
         elif pattern_id in COMMUNITY_PATTERN_QUERIES:
