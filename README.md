@@ -1,6 +1,6 @@
 # br/acc open graph
 
-[![WTG Header](docs/brand/bracc-header.png)](docs/brand/bracc-header.png)
+[![WTG Header](docs/brand/bracc-header.jpg)](docs/brand/bracc-header.jpg)
 
 [English](README.md) | [Portugues](docs/pt-BR/README.md)
 
@@ -191,6 +191,16 @@ If you find this project useful, **star the repo** — it helps others discover 
 
 ---
 
+## Contributors
+
+Thanks to everyone who has contributed to br/acc.
+
+[![Contributors](https://contrib.rocks/image?repo=World-Open-Graph/br-acc)](https://github.com/World-Open-Graph/br-acc/graphs/contributors)
+
+See the [full list of contributors](https://github.com/World-Open-Graph/br-acc/graphs/contributors) on GitHub.
+
+---
+
 ## Support the Project
 
 [![Sponsor](https://img.shields.io/badge/GitHub_Sponsors-Support-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/brunoclz)
@@ -201,6 +211,15 @@ If you want to support development directly:
 |---|---|
 | Solana | `HFceUyei1ndQypNKoiYSsHLHrVcaMZeNBeRhs8LmmkLn` |
 | Ethereum | `0xbB3538D3e1B1Dd7c916BE7DfAC9ac7e322f592c7` |
+
+### Token Disclosure (Transparency)
+
+A community member created an unofficial token and configured creator rewards to the maintainer wallet.
+
+- Token address: `4CtXkPU8oUXVjofhgrX6nALuQw2ZSK2U7tTZKB8qpump` <!-- gitleaks:allow -->
+- This token is not an official project product.
+- Holding or trading it does not provide ownership, governance rights, privileged access, or guaranteed benefits in this repository.
+- This is not financial advice. Crypto assets are high risk; verify addresses on-chain and do your own research.
 
 ---
 
